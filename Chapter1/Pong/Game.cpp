@@ -51,6 +51,22 @@ void Game::run_loop()
 
 void Game::process_input()
 {
+	SDL_Event event;
+
+	// 이벤트 큐에 이벤트가 들어있으면 처리한다.
+	while (SDL_PollEvent(&event))
+	{
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			isRunning_ = false;
+			break;
+		}
+	}
+
+	const Uint8* state = SDL_GetKeyboardState(nullptr);
+	if (state[SDL_SCANCODE_ESCAPE])
+		isRunning_ = false;
 }
 
 void Game::update_game()
