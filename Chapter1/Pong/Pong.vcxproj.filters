@@ -4,10 +4,16 @@
     <Filter Include="Core">
       <UniqueIdentifier>{deb377b3-49b9-41a3-8cba-ab3d6318314d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="exercise1_1">
+      <UniqueIdentifier>{f3cffcbb-5a8e-4e98-bb64-9a32d111bdbe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="exercise1_1.h">
+      <Filter>exercise1_1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -15,5 +21,8 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="exercise1_1.cpp">
+      <Filter>exercise1_1</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

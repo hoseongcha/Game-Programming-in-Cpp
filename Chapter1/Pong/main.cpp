@@ -1,4 +1,5 @@
-#include "Game.h"
+// #include "Game.h"
+#include "exercise1_1.h"
 
 int main(int argc, char** argv)
 {
