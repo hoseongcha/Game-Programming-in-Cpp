@@ -53,6 +53,9 @@ bool Game::startup()
 	ballPosition_.x = 1024 / 2.0f;
 	ballPosition_.y = 768 / 2.0f;
 
+	ballVelocity_.x = -200.0f;
+	ballVelocity_.y = 235.0f;
+
 	return true;
 }
 
@@ -126,6 +129,25 @@ void Game::updateGame()
 		else if (paddlePosition_.y > (768.0f - paddleHeight / 2.0f - thickness))
 			paddlePosition_.y = 768.0f - paddleHeight / 2.0f - thickness;
 	}
+
+	ballPosition_.x += ballVelocity_.x * deltaTime;
+	ballPosition_.y += ballVelocity_.y * deltaTime;
+
+	if (ballPosition_.y < thickness && ballVelocity_.y < 0.0f)
+		ballVelocity_.y *= -1;
+	else if (ballPosition_.y > 768.0f - thickness && ballVelocity_.y > 0.0f)
+		ballVelocity_.y *= -1;
+	else if (ballPosition_.x > 1024.0f - thickness && ballVelocity_.x > 0.0f)
+		ballVelocity_.x *= -1;
+	
+	float diff = fabs(paddlePosition_.y - ballPosition_.y);
+	if (diff <= paddleHeight / 2.0f &&
+		ballPosition_.x <= 25.0f && ballPosition_.x >= 20.0f &&
+		ballVelocity_.x < 0.0f)
+	{
+		ballVelocity_.x *= -1;
+	}
+
 }
 
 void Game::generateOutput()

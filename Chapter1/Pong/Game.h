@@ -35,5 +35,7 @@ private:
 
 	int paddleDirection_;
 
+	Vector2 ballVelocity_;
+
 	bool isRunning_;
 };
