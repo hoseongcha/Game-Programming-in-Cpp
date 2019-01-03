@@ -1,7 +1,8 @@
 #include "Game.h"
 
 Game::Game()
-	: window_(nullptr), isRunning_(true)
+	: window_(nullptr), renderer_(nullptr),
+	isRunning_(true)
 {
 }
 
@@ -16,15 +17,28 @@ bool Game::startup()
 		return false;
 	}
 
-	window_ = SDL_CreateWindow("Game Programming in C++ (Chapter 1)",
-		100,
-		100,
-		1024,
-		768,
-		0);
+	window_ = SDL_CreateWindow(
+		"Game Programming in C++ (Chapter 1)",	// 타이틀
+		100,	// x 좌표
+		100,	// y 좌표
+		1024,	// width
+		768,	// height
+		0		// flags
+	);
 	if (!window_)
 	{
 		SDL_Log("Failed to create window : %s", SDL_GetError());
+		return false;
+	}
+	
+	renderer_ = SDL_CreateRenderer(
+		window_,	// 렌더러를 생성할 윈도우 포인터
+		-1,			// graphics driver (보통은 -1)
+		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC	// 하드웨어 가속, 수직 동기화
+	);
+	if (!renderer_)
+	{
+		SDL_Log("Failed to create renderer : %s", SDL_GetError());
 		return false;
 	}
 
@@ -35,6 +49,7 @@ void Game::shutdown()
 {
 	// 초기화 했던 반대 순서로 종료한다.
 
+	SDL_DestroyRenderer(renderer_);
 	SDL_DestroyWindow(window_);
 	SDL_Quit();
 }
@@ -75,4 +90,12 @@ void Game::update_game()
 
 void Game::generate_output()
 {
+	// 1. back buffer를 초기화
+	SDL_SetRenderDrawColor(renderer_, 0, 0, 255, 255);
+	SDL_RenderClear(renderer_);
+
+	// 2. 게임을 그린다.
+
+	// 3. front buffer와 back buffer를 교환.
+	SDL_RenderPresent(renderer_);
 }
