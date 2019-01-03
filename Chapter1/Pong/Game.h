@@ -33,5 +33,7 @@ private:
 
 	Uint32 ticksCount_;
 
+	int paddleDirection_;
+
 	bool isRunning_;
 };

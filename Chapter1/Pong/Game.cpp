@@ -6,6 +6,7 @@ const float paddleHeight = 100;
 Game::Game()
 	: window_(nullptr), renderer_(nullptr),
 	ticksCount_(0),
+	paddleDirection_(0),
 	isRunning_(true)
 {
 }
@@ -92,6 +93,12 @@ void Game::processInput()
 	const Uint8* state = SDL_GetKeyboardState(nullptr);
 	if (state[SDL_SCANCODE_ESCAPE])
 		isRunning_ = false;
+
+	paddleDirection_ = 0;
+	if (state[SDL_SCANCODE_W])
+		paddleDirection_ -= 1;
+	if (state[SDL_SCANCODE_S])
+		paddleDirection_ += 1;
 }
 
 void Game::updateGame()
@@ -109,6 +116,16 @@ void Game::updateGame()
 		deltaTime = 0.05f;
 
 	ticksCount_ = SDL_GetTicks();
+
+	if (paddleDirection_ != 0)
+	{
+		paddlePosition_.y += paddleDirection_ * 300.0f * deltaTime;
+
+		if (paddlePosition_.y < (paddleHeight / 2.0f + thickness))
+			paddlePosition_.y = paddleHeight / 2.0f + thickness;
+		else if (paddlePosition_.y > (768.0f - paddleHeight / 2.0f - thickness))
+			paddlePosition_.y = 768.0f - paddleHeight / 2.0f - thickness;
+	}
 }
 
 void Game::generateOutput()
@@ -134,9 +151,10 @@ void Game::generateOutput()
 	wall.x = 1024 - thickness;
 	wall.y = 0;
 	wall.w = thickness;
-	wall.y = 768;
+	wall.h = 768;
 	SDL_RenderFillRect(renderer_, &wall);
 
+	SDL_SetRenderDrawColor(renderer_, 255, 255, 255, 255);
 	// °ø
 	SDL_Rect ball = {
 		static_cast<float>(ballPosition_.x - thickness / 2.0f),
