@@ -6,7 +6,7 @@ int main(int argc, char** argv)
 	bool success = game.startup();
 
 	if (success)
-		game.run_loop();
+		game.runLoop();
 	game.shutdown();
 
 	return 0;

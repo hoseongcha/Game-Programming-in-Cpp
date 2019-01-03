@@ -17,12 +17,12 @@ public:
 	bool startup();
 	void shutdown();
 
-	void run_loop();
+	void runLoop();
 
 private:
-	void process_input();
-	void update_game();
-	void generate_output();
+	void processInput();
+	void updateGame();
+	void generateOutput();
 
 private:
 	SDL_Window* window_;
@@ -30,6 +30,8 @@ private:
 
 	Vector2 paddlePosition_;
 	Vector2 ballPosition_;
+
+	Uint32 ticksCount_;
 
 	bool isRunning_;
 };

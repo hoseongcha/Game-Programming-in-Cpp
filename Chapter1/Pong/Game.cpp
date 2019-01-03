@@ -5,6 +5,7 @@ const float paddleHeight = 100;
 
 Game::Game()
 	: window_(nullptr), renderer_(nullptr),
+	ticksCount_(0),
 	isRunning_(true)
 {
 }
@@ -63,17 +64,17 @@ void Game::shutdown()
 	SDL_Quit();
 }
 
-void Game::run_loop()
+void Game::runLoop()
 {
 	while (isRunning_)
 	{
-		process_input();
-		update_game();
-		generate_output();
+		processInput();
+		updateGame();
+		generateOutput();
 	}
 }
 
-void Game::process_input()
+void Game::processInput()
 {
 	SDL_Event event;
 
@@ -93,11 +94,24 @@ void Game::process_input()
 		isRunning_ = false;
 }
 
-void Game::update_game()
+void Game::updateGame()
 {
+	// 경과 시간이 목표한 프레임 시간보다 더 빠를때, (여기서는 목표 프레임 시간은 60FPS)
+	// 60FPS가 될때까지 기다린다.
+	while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticksCount_ + 16))
+		;
+
+	float deltaTime = (SDL_GetTicks() - ticksCount_) / 1000.0f;
+
+	// 경과 시간이 목표한 프레임 시간보다 더 느리면,
+	// 경과 시간을 0.05f로 제한한다.
+	if (deltaTime > 0.05f)
+		deltaTime = 0.05f;
+
+	ticksCount_ = SDL_GetTicks();
 }
 
-void Game::generate_output()
+void Game::generateOutput()
 {
 	// 1. back buffer를 초기화
 	SDL_SetRenderDrawColor(renderer_, 0, 0, 255, 255);
