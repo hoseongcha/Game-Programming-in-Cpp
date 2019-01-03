@@ -1,5 +1,8 @@
 #include "Game.h"
 
+const int thickness = 15;
+const float paddleHeight = 100;
+
 Game::Game()
 	: window_(nullptr), renderer_(nullptr),
 	isRunning_(true)
@@ -41,6 +44,12 @@ bool Game::startup()
 		SDL_Log("Failed to create renderer : %s", SDL_GetError());
 		return false;
 	}
+
+	paddlePosition_.x = 10;
+	paddlePosition_.y = 768 / 2.0f;
+
+	ballPosition_.x = 1024 / 2.0f;
+	ballPosition_.y = 768 / 2.0f;
 
 	return true;
 }
@@ -95,7 +104,43 @@ void Game::generate_output()
 	SDL_RenderClear(renderer_);
 
 	// 2. 게임을 그린다.
+	
+	// 벽 색깔을 설정한다.
+	SDL_SetRenderDrawColor(renderer_, 210, 210, 210, 255);
 
+	// 위쪽 벽
+	SDL_Rect wall = { 0, 0, 1024, thickness };
+	SDL_RenderFillRect(renderer_, &wall);
+
+	// 아래쪽 벽
+	wall.y = 768 - thickness;
+	SDL_RenderFillRect(renderer_, &wall);
+
+	// 오른쪽 벽
+	wall.x = 1024 - thickness;
+	wall.y = 0;
+	wall.w = thickness;
+	wall.y = 768;
+	SDL_RenderFillRect(renderer_, &wall);
+
+	// 공
+	SDL_Rect ball = {
+		static_cast<float>(ballPosition_.x - thickness / 2),
+		static_cast<float>(ballPosition_.y - thickness / 2),
+		thickness,
+		thickness
+	};
+	SDL_RenderFillRect(renderer_, &ball);
+
+	// 패들
+	SDL_Rect paddle = {
+		static_cast<float>(paddlePosition_.x),
+		static_cast<float>(paddlePosition_.y - paddleHeight),
+		thickness,
+		paddleHeight
+	};
+	SDL_RenderFillRect(renderer_, &paddle);
+	
 	// 3. front buffer와 back buffer를 교환.
 	SDL_RenderPresent(renderer_);
 }

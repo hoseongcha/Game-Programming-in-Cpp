@@ -3,6 +3,12 @@
 #define SDL_MAIN_HANDLED
 #include "SDL/SDL.h"
 
+struct Vector2
+{
+	float x;
+	float y;
+};
+
 class Game
 {
 public:
@@ -21,6 +27,9 @@ private:
 private:
 	SDL_Window* window_;
 	SDL_Renderer* renderer_;
+
+	Vector2 paddlePosition_;
+	Vector2 ballPosition_;
 
 	bool isRunning_;
 };
