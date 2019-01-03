@@ -80,6 +80,8 @@ void Game::runLoop()
 
 void Game::processInput()
 {
+	int a = 0;
+
 	SDL_Event event;
 
 	// 이벤트 큐에 이벤트가 들어있으면 처리한다.
