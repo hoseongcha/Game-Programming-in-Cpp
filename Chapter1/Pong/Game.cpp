@@ -125,8 +125,8 @@ void Game::generate_output()
 
 	// °ø
 	SDL_Rect ball = {
-		static_cast<float>(ballPosition_.x - thickness / 2),
-		static_cast<float>(ballPosition_.y - thickness / 2),
+		static_cast<float>(ballPosition_.x - thickness / 2.0f),
+		static_cast<float>(ballPosition_.y - thickness / 2.0f),
 		thickness,
 		thickness
 	};
@@ -135,7 +135,7 @@ void Game::generate_output()
 	// ÆÐµé
 	SDL_Rect paddle = {
 		static_cast<float>(paddlePosition_.x),
-		static_cast<float>(paddlePosition_.y - paddleHeight),
+		static_cast<float>(paddlePosition_.y - paddleHeight / 2.0f),
 		thickness,
 		paddleHeight
 	};
