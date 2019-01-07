@@ -45,6 +45,9 @@ private:
 
 	std::vector<class SpriteComponent*> sprites_;
 
+	// 게임 데모용 코드
+	class Ship* ship_;
+
 	bool isRunning_;
 	bool updatingActors_;
 };

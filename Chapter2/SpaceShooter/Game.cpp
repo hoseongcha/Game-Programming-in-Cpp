@@ -1,6 +1,9 @@
 #include "Game.h"
 #include "Actor.h"
 #include "SpriteComponent.h"
+#include "BGSpriteComponent.h"
+
+#include "Ship.h"
 
 #include "SDL/SDL_image.h"
 
@@ -163,7 +166,30 @@ SDL_Texture* Game::loadTexture(const std::string& filename)
 
 void Game::loadData()
 {
+	ship_ = new Ship(this);
+	ship_->setPosition(Vector2(100.0f, 384.0f));
+	ship_->setScale(1.5f);
 
+	Actor* bgActor = new Actor(this);
+	bgActor->setPosition(Vector2(512.0f, 384.0f));
+
+	BGSpriteComponent* bg = new BGSpriteComponent(bgActor);
+	bg->setScreenSize(Vector2(1024.0f, 768.0f));
+	std::vector<SDL_Texture*> bgTextures = {
+		loadTexture("Assets/Farback01.png"),
+		loadTexture("Assets/Farback02.png")
+	};
+	bg->setBGTextures(bgTextures);
+	bg->setScrollSpeed(-100.0f);
+	
+	bg = new BGSpriteComponent(bgActor, 50);
+	bg->setScreenSize(Vector2(1024.0f, 768.0f));
+	bgTextures = {
+		loadTexture("Assets/Stars.png"),
+		loadTexture("assets/Stars.png")
+	};
+	bg->setBGTextures(bgTextures);
+	bg->setScrollSpeed(-200.0f);
 }
 
 void Game::unloadData()
@@ -197,6 +223,8 @@ void Game::processInput()
 	const Uint8* state = SDL_GetKeyboardState(nullptr);
 	if (state[SDL_SCANCODE_ESCAPE])
 		isRunning_ = false;
+
+	ship_->processKeyboard(state);
 }
 
 void Game::updateGame()

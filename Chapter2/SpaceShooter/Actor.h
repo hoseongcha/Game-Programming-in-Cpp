@@ -36,9 +36,11 @@ public:
 	void addComponent(class Component* component);
 	void removeComponent(class Component* component);
 
+protected:
+	virtual void updateActor(float deltaTime);
+
 private:
 	void updateComponents(float deltaTime);
-	virtual void updateActor(float deltaTime);
 
 private:
 	State state_;
