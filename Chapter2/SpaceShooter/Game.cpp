@@ -275,7 +275,8 @@ void Game::generateOutput()
 	SDL_RenderClear(renderer_);
 
 	// 2. 게임을 그린다.
-
+	for (auto sprite : sprites_)
+		sprite->draw(renderer_);
 	
 	// 3. front buffer와 back buffer를 교환.
 	SDL_RenderPresent(renderer_);
