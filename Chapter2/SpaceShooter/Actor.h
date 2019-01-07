@@ -1,0 +1,49 @@
+#pragma once
+
+#include "Math.h"
+
+#include <vector>
+
+class Actor
+{
+public:
+	enum class State
+	{
+		Active,
+		Paused,
+		Dead,
+	};
+
+	Actor(class Game* game);
+	virtual ~Actor();
+
+	void update(float deltaTime);
+	
+	State getState() const;
+	void setState(State state);
+
+	const Vector2& getPosition() const;
+	void setPosition(const Vector2& position);
+
+	float getRotation() const;
+	void setRotation(float rotation);
+
+	float getScale() const;
+	void setScale(float scale);
+
+	class Game* getGame();
+
+private:
+	void updateComponents(float deltaTime);
+	virtual void updateActor(float deltaTime);
+
+private:
+	State state_;
+
+	Vector2 position_;
+	float rotation_;
+	float scale_;
+
+	std::vector<class Component*> components_;
+	class Game* game_;
+};
