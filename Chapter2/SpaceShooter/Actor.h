@@ -33,6 +33,9 @@ public:
 
 	class Game* getGame();
 
+	void addComponent(class Component* component);
+	void removeComponent(class Component* component);
+
 private:
 	void updateComponents(float deltaTime);
 	virtual void updateActor(float deltaTime);
