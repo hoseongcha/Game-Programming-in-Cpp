@@ -2,6 +2,8 @@
 
 int main(int argc, char** argv)
 {
+	SDL_SetMainReady();
+
 	Game game;
 	bool success = game.startup();
 
