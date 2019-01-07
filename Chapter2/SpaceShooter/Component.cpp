@@ -20,3 +20,8 @@ int Component::getUpdateOrder() const
 {
 	return updateOrder_;
 }
+
+Actor* Component::getOwner()
+{
+	return owner_;
+}

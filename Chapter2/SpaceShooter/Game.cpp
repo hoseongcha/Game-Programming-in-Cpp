@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Actor.h"
+#include "SpriteComponent.h"
 
 #include "SDL/SDL_image.h"
 

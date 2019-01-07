@@ -11,7 +11,7 @@ public:
 	int getUpdateOrder() const;
 
 protected:
-	
+	class Actor* getOwner();
 
 private:
 	class Actor* owner_;
