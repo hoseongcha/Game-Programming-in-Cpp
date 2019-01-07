@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "Actor.h"
 
+#include "SDL/SDL_image.h"
+
 Game::Game()
 	: window_(nullptr), renderer_(nullptr),
 	isRunning_(true),
@@ -44,6 +46,12 @@ bool Game::startup()
 		return false;
 	}
 
+	if (IMG_Init(IMG_INIT_PNG) == 0)
+	{
+		SDL_Log("Unable to initialize SDL_image : %s", SDL_GetError());
+		return false;
+	}
+
 	loadData();
 
 	ticksCount_ = SDL_GetTicks();
@@ -56,7 +64,7 @@ void Game::shutdown()
 	// 초기화 했던 반대 순서로 종료한다.
 	
 	unloadData();
-
+	IMG_Quit();
 	SDL_DestroyRenderer(renderer_);
 	SDL_DestroyWindow(window_);
 	SDL_Quit();
@@ -99,6 +107,59 @@ void Game::removeActor(Actor* actor)
 	}
 }
 
+void Game::addSprite(SpriteComponent* sprite)
+{
+	int drawOrder = sprite->getDrawOrder();
+	auto iter = sprites_.begin();
+
+	while (iter != sprites_.end())
+	{
+		if (drawOrder < (*iter)->getDrawOrder())
+			break;
+
+		++iter;
+	}
+
+	sprites_.insert(iter, sprite);
+}
+
+void Game::removeSprite(SpriteComponent* sprite)
+{
+	auto iter = std::find(sprites_.begin(), sprites_.end(), sprite);
+	if (iter != sprites_.end()) sprites_.erase(iter);
+}
+
+SDL_Texture* Game::loadTexture(const std::string& filename)
+{
+	SDL_Texture* texture = nullptr;
+
+	auto iter = textures_.find(filename);
+	if (iter != textures_.end())
+		texture = iter->second;
+	else
+	{
+		SDL_Surface* surface = IMG_Load(filename.c_str());
+		if (!surface)
+		{
+			SDL_Log("Failed to load texture file %s", filename.c_str());
+			return nullptr;
+		}
+
+		texture = SDL_CreateTextureFromSurface(renderer_, surface);
+		SDL_FreeSurface(surface);
+
+		if (!texture)
+		{
+			SDL_Log("Failed to convert surface to texture for %s", filename.c_str());
+			return false;
+		}
+
+		textures_.emplace(filename.c_str(), texture);
+	}
+
+	return texture;
+}
+
 void Game::loadData()
 {
 
@@ -109,6 +170,10 @@ void Game::unloadData()
 	// Actor의 소멸자에서 자동으로 액터 목록에서 자신을 지운다.
 	while (!actors_.empty())
 		delete actors_.back();
+
+	for (auto element : textures_)
+		SDL_DestroyTexture(element.second);
+	textures_.clear();
 }
 
 void Game::processInput()
