@@ -25,6 +25,9 @@
     <ClCompile Include="SpriteComponent.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="AnimSpriteComponent.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -40,6 +43,9 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="SpriteComponent.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimSpriteComponent.h">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
