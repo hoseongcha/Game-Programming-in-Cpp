@@ -1,13 +1,10 @@
 #include "Game.h"
-
-const int thickness = 15;
-const float paddleHeight = 100;
+#include "Actor.h"
 
 Game::Game()
 	: window_(nullptr), renderer_(nullptr),
-	ticksCount_(0),
-	paddleDirection_(0),
-	isRunning_(true)
+	isRunning_(true),
+	updatingActors_(false)
 {
 }
 
@@ -47,14 +44,9 @@ bool Game::startup()
 		return false;
 	}
 
-	paddlePosition_.x = 10;
-	paddlePosition_.y = 768 / 2.0f;
+	loadData();
 
-	ballPosition_.x = 1024 / 2.0f;
-	ballPosition_.y = 768 / 2.0f;
-
-	ballVelocity_.x = -200.0f;
-	ballVelocity_.y = 235.0f;
+	ticksCount_ = SDL_GetTicks();
 
 	return true;
 }
@@ -62,6 +54,8 @@ bool Game::startup()
 void Game::shutdown()
 {
 	// 초기화 했던 반대 순서로 종료한다.
+	
+	unloadData();
 
 	SDL_DestroyRenderer(renderer_);
 	SDL_DestroyWindow(window_);
@@ -76,6 +70,45 @@ void Game::runLoop()
 		updateGame();
 		generateOutput();
 	}
+}
+
+void Game::addActor(Actor* actor)
+{
+	if (updatingActors_)
+		pendingActors_.emplace_back(actor);
+	else
+		actors_.emplace_back(actor);
+}
+
+void Game::removeActor(Actor* actor)
+{
+	auto iter = std::find(pendingActors_.begin(), pendingActors_.end(), actor);
+	if (iter != pendingActors_.end())
+	{
+		std::iter_swap(iter, pendingActors_.end() - 1);
+		pendingActors_.pop_back();
+	}
+	else
+	{
+		iter = std::find(actors_.begin(), actors_.end(), actor);
+		if (iter != actors_.end())
+		{
+			std::iter_swap(iter, actors_.end() - 1);
+			actors_.pop_back();
+		}
+	}
+}
+
+void Game::loadData()
+{
+
+}
+
+void Game::unloadData()
+{
+	// Actor의 소멸자에서 자동으로 액터 목록에서 자신을 지운다.
+	while (!actors_.empty())
+		delete actors_.back();
 }
 
 void Game::processInput()
@@ -98,12 +131,6 @@ void Game::processInput()
 	const Uint8* state = SDL_GetKeyboardState(nullptr);
 	if (state[SDL_SCANCODE_ESCAPE])
 		isRunning_ = false;
-
-	paddleDirection_ = 0;
-	if (state[SDL_SCANCODE_W])
-		paddleDirection_ -= 1;
-	if (state[SDL_SCANCODE_S])
-		paddleDirection_ += 1;
 }
 
 void Game::updateGame()
@@ -122,34 +149,29 @@ void Game::updateGame()
 
 	ticksCount_ = SDL_GetTicks();
 
-	if (paddleDirection_ != 0)
-	{
-		paddlePosition_.y += paddleDirection_ * 300.0f * deltaTime;
+	// 액터를 업데이트한다.
+	updatingActors_ = true;
+	for (auto actor : actors_)
+		actor->update(deltaTime);
+	updatingActors_ = false;
 
-		if (paddlePosition_.y < (paddleHeight / 2.0f + thickness))
-			paddlePosition_.y = paddleHeight / 2.0f + thickness;
-		else if (paddlePosition_.y > (768.0f - paddleHeight / 2.0f - thickness))
-			paddlePosition_.y = 768.0f - paddleHeight / 2.0f - thickness;
+	// 액터를 업데이트 하면서 생긴 새로운 액터를
+	// 액터 목록에 추가한다.
+	for (auto actor : pendingActors_)
+		actors_.emplace_back(actor);
+	pendingActors_.clear();
+
+	// 액터중에 수명이 다 한 액터를 모은다.
+	std::vector<Actor*> deadActors;
+	for (auto actor : actors_)
+	{
+		if (actor->getState() == Actor::State::Dead)
+			deadActors.emplace_back(actor);
 	}
 
-	ballPosition_.x += ballVelocity_.x * deltaTime;
-	ballPosition_.y += ballVelocity_.y * deltaTime;
-
-	if (ballPosition_.y < thickness && ballVelocity_.y < 0.0f)
-		ballVelocity_.y *= -1;
-	else if (ballPosition_.y > 768.0f - thickness && ballVelocity_.y > 0.0f)
-		ballVelocity_.y *= -1;
-	else if (ballPosition_.x > 1024.0f - thickness && ballVelocity_.x > 0.0f)
-		ballVelocity_.x *= -1;
-	
-	float diff = fabs(paddlePosition_.y - ballPosition_.y);
-	if (diff <= paddleHeight / 2.0f &&
-		ballPosition_.x <= 25.0f && ballPosition_.x >= 20.0f &&
-		ballVelocity_.x < 0.0f)
-	{
-		ballVelocity_.x *= -1;
-	}
-
+	// 수명이 다 한 액터들은 목록에서 지운다.
+	for (auto actor : deadActors)
+		delete actor;
 }
 
 void Game::generateOutput()
@@ -159,43 +181,7 @@ void Game::generateOutput()
 	SDL_RenderClear(renderer_);
 
 	// 2. 게임을 그린다.
-	
-	// 벽 색깔을 설정한다.
-	SDL_SetRenderDrawColor(renderer_, 210, 210, 210, 255);
 
-	// 위쪽 벽
-	SDL_Rect wall = { 0, 0, 1024, thickness };
-	SDL_RenderFillRect(renderer_, &wall);
-
-	// 아래쪽 벽
-	wall.y = 768 - thickness;
-	SDL_RenderFillRect(renderer_, &wall);
-
-	// 오른쪽 벽
-	wall.x = 1024 - thickness;
-	wall.y = 0;
-	wall.w = thickness;
-	wall.h = 768;
-	SDL_RenderFillRect(renderer_, &wall);
-
-	SDL_SetRenderDrawColor(renderer_, 255, 255, 255, 255);
-	// 공
-	SDL_Rect ball = {
-		static_cast<float>(ballPosition_.x - thickness / 2.0f),
-		static_cast<float>(ballPosition_.y - thickness / 2.0f),
-		thickness,
-		thickness
-	};
-	SDL_RenderFillRect(renderer_, &ball);
-
-	// 패들
-	SDL_Rect paddle = {
-		static_cast<float>(paddlePosition_.x),
-		static_cast<float>(paddlePosition_.y - paddleHeight / 2.0f),
-		thickness,
-		paddleHeight
-	};
-	SDL_RenderFillRect(renderer_, &paddle);
 	
 	// 3. front buffer와 back buffer를 교환.
 	SDL_RenderPresent(renderer_);
