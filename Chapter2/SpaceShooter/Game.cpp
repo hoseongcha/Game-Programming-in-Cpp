@@ -4,8 +4,11 @@
 #include "BGSpriteComponent.h"
 
 #include "Ship.h"
+#include "AnimSpriteComponent.h"
 
 #include "SDL/SDL_image.h"
+
+#include <sstream>
 
 Game::Game()
 	: window_(nullptr), renderer_(nullptr),
@@ -166,9 +169,28 @@ SDL_Texture* Game::loadTexture(const std::string& filename)
 
 void Game::loadData()
 {
-	ship_ = new Ship(this);
+	/*ship_ = new Ship(this);
 	ship_->setPosition(Vector2(100.0f, 384.0f));
-	ship_->setScale(1.5f);
+	ship_->setScale(1.5f);*/
+
+#pragma region Exercise2_2
+	Actor* skeleton = new Actor(this);
+	skeleton->setPosition(Vector2(100.0f, 700.0f));
+	asc_ = new AnimSpriteComponent(skeleton);
+	
+	std::vector<SDL_Texture*> animTextures(18);
+	for (int i = 0; i < 18; ++i)
+	{
+		std::ostringstream oss;
+		oss << "Assets/Character" << (i < 9 ? "0" : "") << i + 1 << ".png";
+		animTextures[i] = loadTexture(oss.str());
+	}
+
+	asc_->setAnimTextures(animTextures);
+	asc_->setAnimation("Walking", 0, 5);
+	asc_->setAnimation("Jumping", 6, 14);
+	asc_->setAnimation("Punch", 15, 17);
+#pragma endregion
 
 	Actor* bgActor = new Actor(this);
 	bgActor->setPosition(Vector2(512.0f, 384.0f));
@@ -194,6 +216,8 @@ void Game::loadData()
 
 void Game::unloadData()
 {
+	/*delete ship_;*/
+
 	// Actor의 소멸자에서 자동으로 액터 목록에서 자신을 지운다.
 	while (!actors_.empty())
 		delete actors_.back();
@@ -224,7 +248,24 @@ void Game::processInput()
 	if (state[SDL_SCANCODE_ESCAPE])
 		isRunning_ = false;
 
-	ship_->processKeyboard(state);
+	/*ship_->processKeyboard(state);*/
+#pragma region Exercise2_2
+	if (state[SDL_SCANCODE_W])
+	{
+		asc_->changeAnimation("Walking", false);
+		asc_->setAnimFPS(8);
+	}
+	if (state[SDL_SCANCODE_SPACE])
+	{
+		asc_->changeAnimation("Jumping", false);
+		asc_->setAnimFPS(8);
+	}
+	if (state[SDL_SCANCODE_P])
+	{
+		asc_->changeAnimation("Punch", false);
+		asc_->setAnimFPS(8);
+	}
+#pragma endregion
 }
 
 void Game::updateGame()

@@ -48,6 +48,10 @@ private:
 	// 게임 데모용 코드
 	class Ship* ship_;
 
+#pragma region Exercise2_2
+	class AnimSpriteComponent* asc_;
+#pragma endregion
+
 	bool isRunning_;
 	bool updatingActors_;
 };
