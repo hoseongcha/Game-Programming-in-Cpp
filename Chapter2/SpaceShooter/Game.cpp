@@ -5,6 +5,7 @@
 
 #include "Ship.h"
 #include "AnimSpriteComponent.h"
+#include "TileMapComponent.h"
 
 #include "SDL/SDL_image.h"
 
@@ -174,7 +175,7 @@ void Game::loadData()
 	ship_->setScale(1.5f);*/
 
 #pragma region Exercise2_2
-	Actor* skeleton = new Actor(this);
+	/*Actor* skeleton = new Actor(this);
 	skeleton->setPosition(Vector2(100.0f, 700.0f));
 	asc_ = new AnimSpriteComponent(skeleton);
 	
@@ -189,10 +190,28 @@ void Game::loadData()
 	asc_->setAnimTextures(animTextures);
 	asc_->setAnimation("Walking", 0, 5);
 	asc_->setAnimation("Jumping", 6, 14);
-	asc_->setAnimation("Punch", 15, 17);
+	asc_->setAnimation("Punch", 15, 17);*/
 #pragma endregion
 
-	Actor* bgActor = new Actor(this);
+	Actor* tileMapActor = new Actor(this);
+	tileMapActor->setPosition(Vector2(512.0f, 384.0f));
+
+	TileMapComponent* tileMap = new TileMapComponent(tileMapActor, 100);
+	tileMap->readMapData("Assets/MapLayer1.csv");
+	tileMap->setUnit(32);
+	tileMap->setTexture(loadTexture("Assets/Tiles.png"));
+
+	tileMap = new TileMapComponent(tileMapActor, 50);
+	tileMap->readMapData("Assets/MapLayer2.csv");
+	tileMap->setUnit(32);
+	tileMap->setTexture(loadTexture("Assets/Tiles.png"));
+
+	tileMap = new TileMapComponent(tileMapActor);
+	tileMap->readMapData("Assets/MapLayer3.csv");
+	tileMap->setUnit(32);
+	tileMap->setTexture(loadTexture("Assets/Tiles.png"));
+	
+	/*Actor* bgActor = new Actor(this);
 	bgActor->setPosition(Vector2(512.0f, 384.0f));
 
 	BGSpriteComponent* bg = new BGSpriteComponent(bgActor);
@@ -211,7 +230,7 @@ void Game::loadData()
 		loadTexture("assets/Stars.png")
 	};
 	bg->setBGTextures(bgTextures);
-	bg->setScrollSpeed(-200.0f);
+	bg->setScrollSpeed(-200.0f);*/
 }
 
 void Game::unloadData()
@@ -250,7 +269,7 @@ void Game::processInput()
 
 	/*ship_->processKeyboard(state);*/
 #pragma region Exercise2_2
-	if (state[SDL_SCANCODE_W])
+	/*if (state[SDL_SCANCODE_W])
 	{
 		asc_->changeAnimation("Walking", false);
 		asc_->setAnimFPS(8);
@@ -264,7 +283,7 @@ void Game::processInput()
 	{
 		asc_->changeAnimation("Punch", false);
 		asc_->setAnimFPS(8);
-	}
+	}*/
 #pragma endregion
 }
 

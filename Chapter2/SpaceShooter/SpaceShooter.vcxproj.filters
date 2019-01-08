@@ -32,6 +32,9 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="TileMapComponent.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -56,5 +59,8 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Ship.h" />
+    <ClInclude Include="TileMapComponent.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

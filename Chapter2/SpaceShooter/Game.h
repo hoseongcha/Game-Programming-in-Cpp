@@ -49,7 +49,7 @@ private:
 	class Ship* ship_;
 
 #pragma region Exercise2_2
-	class AnimSpriteComponent* asc_;
+	/*class AnimSpriteComponent* asc_;*/
 #pragma endregion
 
 	bool isRunning_;

@@ -56,3 +56,8 @@ int SpriteComponent::getTextureHeight() const
 {
 	return textureHeight_;
 }
+
+SDL_Texture * SpriteComponent::getTexture()
+{
+	return texture_;
+}

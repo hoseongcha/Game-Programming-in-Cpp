@@ -18,6 +18,9 @@ public:
 	int getTextureWidth() const;
 	int getTextureHeight() const;
 
+protected:
+	SDL_Texture* getTexture();
+
 private:
 	SDL_Texture* texture_;
 	int drawOrder_;
